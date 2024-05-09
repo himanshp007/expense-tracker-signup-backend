@@ -12,10 +12,10 @@ function handleSignup(event) {
 
     axios.post('http://localhost:3000/user/signup', signupData)
         .then(response => {
-            displayMessage(response.data.message);
+            displayMessage(response.data.message, response.status);
         })
         .catch(err => {
-            displayMessage(err.message);
+            displayMessage(err.response.data.message);
         });
 };
 
@@ -33,7 +33,7 @@ function handleLogin(event) {
 
     axios.post('http://localhost:3000/user/login', loginData)
         .then(response => {
-            displayMessage(response.data.message);
+            displayMessage(response.data.message, response.status);
         })
         .catch(err => {
             displayMessage(err.response.data.message);
@@ -41,11 +41,18 @@ function handleLogin(event) {
 }
 
 
-function displayMessage(message) {
+function displayMessage(message, status=null) {
     const h4 = document.getElementById('message');
 
+    let color = 'red'
+    if (status === 200) {
+        color = 'green'
+    }
     h4.innerHTML = message;
+    h4.style.color = color
 };
+
+
 
 function resetForm(formType){
 

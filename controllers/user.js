@@ -9,6 +9,12 @@ exports.postUser = async (req, res, next) => {
         }
         const {name, email, password} = req.body;
 
+        const user = await User.findOne({where: {email: email}})
+
+        if (user) {
+            return res.status(404).json({message: "Email already registered"})
+        };
+
         await User.create({
             name: name,
             email: email,
@@ -23,29 +29,28 @@ exports.postUser = async (req, res, next) => {
     
 };
 
+
 exports.postLoginUser = async (req, res, next) => {
     try {
         if (!req.body.email || !req.body.password) {
-            throw new Error("All fields are mandatory");
+            throw new Error("Email and password are required fields");
         }
 
         const { email, password } = req.body;
 
-        const user = await User.findOne({ email });
+        const user = await User.findOne({ where: { email: email } });
 
         if (!user) {
-            return res.status(401).json({ message: 'User not found' });
+            return res.status(404).json({ message: 'User Not Found' });
         }
 
-        // Check if the password matches
         if (user.password !== password) {
             return res.status(401).json({ message: 'Incorrect password' });
         }
 
         res.status(200).json({ message: 'User logged in successfully!' });
     } catch (err) {
-        res.status(500).json({
-            error: err.message,
-        });
+        console.error("Error in login:", err);
+        res.status(500).json({ message: "Internal server error" });
     }
 }
