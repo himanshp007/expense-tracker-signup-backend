@@ -1,3 +1,18 @@
+window.addEventListener('DOMContentLoaded', ()=> {
+
+    const token = localStorage.getItem('token')
+
+    axios.get('http://localhost:3000/expense/get-expense', {headers: {'Authorization': token}})
+        .then( (response) => { 
+            
+            displayExpenses();
+        })
+        .catch(err => console.log(err))
+
+});
+
+
+
 
 function handleSignup(event) {
     event.preventDefault();
@@ -10,7 +25,7 @@ function handleSignup(event) {
     };
 
     resetForm('signup');
-
+    
     axios.post('http://localhost:3000/user/signup', signupData)
         .then(response => {
             displayMessage(response.data.message, response.status);
@@ -34,8 +49,8 @@ function handleLogin(event) {
 
     axios.post('http://localhost:3000/user/login', loginData)
         .then(response => {
-            // displayMessage(response.data.message, response.status);
-            window.location.href = 'http://127.0.0.1:5500/views/add-expense.html';
+            localStorage.setItem('token', response.data.token);
+            window.location.href = '../views/add-expense.html';
         })
         .catch(err => {
             displayMessage(err.response.data.message);
@@ -54,7 +69,10 @@ function handleAddExpense(event) {
         category: formData.category.value,
     }
 
-    axios.post('http://localhost:3000/expense/add-expense', expenseData)
+    resetForm('addExpense');
+
+    const token = localStorage.getItem('token')
+    axios.post('http://localhost:3000/expense/add-expense',expenseData, {headers: {'Authorization': token}})
         .then(response => {
             displayExpenses();
         })
@@ -68,26 +86,24 @@ function handleAddExpense(event) {
 
 
 function displayExpenses() {
-
-    axios.get('http://localhost:3000/expense/get-expense')
-        .then( (response) => { 
+    const token = localStorage.getItem('token')
+    axios.get('http://localhost:3000/expense/get-expense', { headers: { 'Authorization': token }})
+        .then(response => { 
             const allItems = document.querySelector('ul');
             allItems.innerHTML = "";
 
             const data = response.data.result;
+            console.log(data)
 
             data.forEach(item => {
-                const listItem = createFront(item);
+                const listItem = createFront(item, token); 
                 allItems.appendChild(listItem);
             })
-            
         })
         .catch(err => console.log(err))
-};
+}
 
-
-
-function createFront(item) {
+function createFront(item, token) {
     const listItem = document.createElement('li');
     const p = document.createElement('p');
     p.innerHTML = `${item.amount} - ${item.description} - ${item.category}`;
@@ -96,7 +112,7 @@ function createFront(item) {
 
     deleteBtn.addEventListener('click', async () => {
         try {
-            await axios.delete(`http://localhost:3000/expense/delete-expense/${item.id}`);
+            await axios.delete(`http://localhost:3000/expense/delete-expense/${item.id}`, { headers: { 'Authorization': token }});
             displayExpenses();
         } catch (err) {
             console.log(err);
@@ -107,7 +123,8 @@ function createFront(item) {
     listItem.appendChild(p);
 
     return listItem;
-};
+}
+
 
 
 
@@ -126,12 +143,17 @@ function displayMessage(message, status=null) {
 
 function resetForm(formType){
 
-    document.getElementById('email').value = '';
-    document.getElementById('password').value = '';
-
-    if (formType === 'signup')
-    document.getElementById('name').value = '';
+    if (formType === 'login') {
+        document.getElementById('email').value = '';
+        document.getElementById('password').value = '';
+    }else if (formType === 'signup') {
+        document.getElementById('email').value = '';
+        document.getElementById('password').value = '';
+        document.getElementById('name').value = '';
+    }else if (formType === 'addExpense') {
+        document.getElementById('amount').value = '';
+        document.getElementById('description').value = '';
+        document.getElementById('category').value = '';
+    }
     
 };
-
-displayExpenses();
