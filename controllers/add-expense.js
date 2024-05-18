@@ -1,4 +1,5 @@
 const Expense = require("../models/add-expense");
+const User = require('../models/user');
 
 exports.postExpense = async (req, res, next) => {
     try {
@@ -25,7 +26,11 @@ exports.postExpense = async (req, res, next) => {
 exports.getExpense = async (req, res, next) => {
     try {
         const expenses = await req.user.getExpenses();
-        res.status(200).json({ result: expenses });
+        const user = await User.findOne({ where: { id: req.user.id } });
+        const premium = user.ispremiumuser;
+        const premiumUser = premium === 1;
+
+        res.status(200).json({ result: expenses, premiumuserCheck: premiumUser });
     } catch (err) {
         console.error("Error fetching expenses:", err);
         res.status(500).json({ message: "Something went wrong" });
@@ -33,22 +38,6 @@ exports.getExpense = async (req, res, next) => {
 };
 
 
-// exports.deleteExpense = async (req, res, next) => {
-//     try {
-//         const expenseId = req.params.Id;
-
-//         await Expense.destroy({
-//             where: {
-//               id: expenseId
-//             },
-//           })
-//         .then(result => {
-//             res.status(200).json({message: "Deleted Successfully"});
-//         })
-//     }catch (err) {
-//         res.status(500).json({error : err.message});
-//     };
-// };
 
 exports.deleteExpense = async (req, res, next) => {
     try {
