@@ -5,15 +5,15 @@ window.addEventListener('DOMContentLoaded', ()=> {
 
     axios.get('http://localhost:3000/expense/get-expense', {headers: {'Authorization': token}})
         .then( (response) => { 
-            
-            displayExpenses();
-
             if (response.data.premiumuserCheck) {
                 const button = document.getElementById('rzrpay-btn');
+                
                 if (button) {
                     button.remove();
+                    premiumUser();
                 }
             }
+            displayExpenses();
         })
         .catch(err => console.log(err))
 
@@ -98,16 +98,10 @@ function displayExpenses() {
     axios.get('http://localhost:3000/expense/get-expense', { headers: { 'Authorization': token }})
         .then(response => { 
 
-            if (response.data.premiumuserCheck) {
-                const button = document.getElementById('rzrpay-btn');
-                button.remove();
-            }
-            
             const allItems = document.querySelector('ul');
             allItems.innerHTML = "";
 
             const data = response.data.result;
-            console.log(data)
 
             data.forEach(item => {
                 const listItem = createFront(item, token); 
@@ -191,6 +185,8 @@ document.getElementById('rzrpay-btn').onclick = async function(event) {
             button.remove();
 
             alert("You are premium user now")
+
+            premiumUser();
         },
     };
 
@@ -203,3 +199,53 @@ document.getElementById('rzrpay-btn').onclick = async function(event) {
         alert("Something went wrong");
     })
 }
+
+
+function premiumUser() {
+    const premiumDiv = document.getElementsByClassName('premium-user')[0];
+    const headingElement = document.createElement('h4');
+    headingElement.innerHTML = "You are a Premium User";
+    const leaderBtn = document.createElement('button');
+    leaderBtn.textContent = "Show Leaderboard";
+    leaderBtn.id = 'leaderbtn'
+    headingElement.appendChild(leaderBtn);
+    premiumDiv.appendChild(headingElement);
+
+    leaderBtn.onclick = async function(event) {
+
+        const token = localStorage.getItem('token');
+        axios.get('http://localhost:3000/premium/showleaderboard', { headers: { 'Authorization': token }})
+        .then(response => {
+            console.log(response.data.result)
+            
+            const data = response.data.result;
+
+            const body = document.getElementsByTagName('body')[0];
+            const ul = document.createElement('ul');
+            ul.id = 'leaderlist';
+            body.appendChild(ul);
+
+            const allitems = document.getElementById('leaderlist');
+            data.forEach(item => {
+                const listItem = document.createElement('li');
+                const p = document.createElement('p');
+                p.innerHTML = `Name: ${item.name} - Total Expense - ${item.total}`;
+                listItem.appendChild(p);
+                allitems.appendChild(listItem);
+            })
+
+         })
+
+    }
+}
+
+function createLeader() {
+    const body = document.getElementsByTagName('body')[0];
+    const leaderHeading = document.createElement('h4');
+    leaderHeading.id = 'leaderheading';
+    leaderHeading.innerHTML = "Leaderboard";
+
+    body.appendChild(leaderHeading);
+}
+
+

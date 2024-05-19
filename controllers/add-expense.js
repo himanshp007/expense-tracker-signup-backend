@@ -28,9 +28,8 @@ exports.getExpense = async (req, res, next) => {
         const expenses = await req.user.getExpenses();
         const user = await User.findOne({ where: { id: req.user.id } });
         const premium = user.ispremiumuser;
-        const premiumUser = premium === 1;
 
-        res.status(200).json({ result: expenses, premiumuserCheck: premiumUser });
+        res.status(200).json({ result: expenses, premiumuserCheck: premium });
     } catch (err) {
         console.error("Error fetching expenses:", err);
         res.status(500).json({ message: "Something went wrong" });
@@ -43,11 +42,10 @@ exports.deleteExpense = async (req, res, next) => {
     try {
         const expenseId = req.params.Id;
 
-        // Assuming you have properly defined the association between User and Expense
         await Expense.destroy({
             where: {
                 id: expenseId,
-                userId: req.user.id // Ensure that the expense belongs to the authenticated user
+                userId: req.user.id
             }
         });
 

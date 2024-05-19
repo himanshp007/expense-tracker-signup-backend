@@ -6,7 +6,6 @@
     <title>Expense</title>
 </head>
 <body>
-
     <form onsubmit="handleAddExpense(event)">
         <label for="amount">Expense Amount</label>
         <input type="number" name="amount" id="amount" required>
@@ -23,12 +22,11 @@
             <option value="Bills and Utilities">Bills and Utilities</option>
             <option value="Auto and Transport">Auto and Transport</option>
         </select>
-
-        <button type="submit">Add Expense</button>
+        <div class="premium-user"><button type="submit">Add Expense</button></div>
     </form>
+
     <button id="rzrpay-btn">Buy Premium</button>
     <ul></ul>
-    <h4 id="message"></h4>
 
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 

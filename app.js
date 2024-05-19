@@ -10,6 +10,7 @@ const Order = require('./models/order');
 const userRoutes = require('./routes/user');
 const expenseRoutes = require('./routes/add-expense');
 const purchaseRoutes = require('./routes/purchase');
+const premiumRoutes = require('./routes/premium');
 
 
 const app = express();
@@ -21,6 +22,7 @@ app.use(bodyParser.json());
 app.use('/user', userRoutes);
 app.use('/expense', expenseRoutes);
 app.use('/purchase', purchaseRoutes);
+app.use('/premium', premiumRoutes);
 
 
 

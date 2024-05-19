@@ -10,7 +10,7 @@ exports.purchasePremium = async (req, res, next) => {
             key_secret: process.env.RAZORPAY_KEY_SECRET
         });
 
-        const amount = 2500;
+        const amount = 25050;
         const currency = "INR";
 
         rzrPay.orders.create({amount, currency}, (err, order) => {
