@@ -229,7 +229,7 @@ function premiumUser() {
             data.forEach(item => {
                 const listItem = document.createElement('li');
                 const p = document.createElement('p');
-                p.innerHTML = `Name: ${item.name} - Total Expense - ${item.total}`;
+                p.innerHTML = `Name: ${item.name} - Total Expense - ${item.totalexpense}`;
                 listItem.appendChild(p);
                 allitems.appendChild(listItem);
             })
