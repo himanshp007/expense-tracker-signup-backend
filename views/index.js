@@ -216,20 +216,16 @@ function premiumUser() {
         const token = localStorage.getItem('token');
         axios.get('http://localhost:3000/premium/showleaderboard', { headers: { 'Authorization': token }})
         .then(response => {
-            console.log(response.data.result)
             
             const data = response.data.result;
 
-            const body = document.getElementsByTagName('body')[0];
-            const ul = document.createElement('ul');
-            ul.id = 'leaderlist';
-            body.appendChild(ul);
-
+            createLeader();
             const allitems = document.getElementById('leaderlist');
+            allitems.innerHTML = "";
             data.forEach(item => {
                 const listItem = document.createElement('li');
                 const p = document.createElement('p');
-                p.innerHTML = `Name: ${item.name} - Total Expense - ${item.totalexpense}`;
+                p.innerHTML = `Name: ${item.name} - Total Expense - ${item.totalExpense}`;
                 listItem.appendChild(p);
                 allitems.appendChild(listItem);
             })
@@ -240,12 +236,19 @@ function premiumUser() {
 }
 
 function createLeader() {
-    const body = document.getElementsByTagName('body')[0];
+
+    const div = document.getElementById('leader_container');
+    div.innerHTML = "";
+
     const leaderHeading = document.createElement('h4');
     leaderHeading.id = 'leaderheading';
     leaderHeading.innerHTML = "Leaderboard";
 
-    body.appendChild(leaderHeading);
+    const ul = document.createElement('ul');
+    ul.id = 'leaderlist';
+
+    div.appendChild(leaderHeading);
+    div.appendChild(ul);
 }
 
 

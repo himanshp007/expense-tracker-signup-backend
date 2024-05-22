@@ -10,16 +10,9 @@ exports.showLeaderboard = async (req, res, next) => {
             attributes: [
                 'id', 
                 'name', 
-                [sequelize.fn('SUM', sequelize.col('expenses.amount')), 'totalexpense'] 
+                'totalExpense'
             ],
-            include: [
-                {
-                    model: Expense, 
-                    attributes: [] 
-                }
-            ],
-            group: ['user.id'],
-            order: sequelize.literal('totalexpense DESC')
+            order: sequelize.literal('totalExpense DESC')
         });
 
         res.status(200).json({ result: leaderboardDetails });

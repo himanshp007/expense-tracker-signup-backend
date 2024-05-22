@@ -10,6 +10,10 @@ exports.postExpense = async (req, res, next) => {
 
         const {amount, description, category} = req.body;
 
+        User.findOne({where:{id: req.user.id}}).then((user)=> {
+            user.update({totalExpense: user.totalExpense + +amount})
+        }).catch((err)=> console.log(err))
+
         await req.user.createExpense({
             amount:amount,
             description: description,

@@ -32,7 +32,7 @@ Expense.belongsTo(User);
 User.hasMany(Order);
 Order.belongsTo(User);
 
-sequelize.sync()
+sequelize.sync({})
   .then(() => {
     console.log("Database sync successful");
     app.listen(3000, () => {
