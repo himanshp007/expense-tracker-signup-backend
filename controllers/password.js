@@ -134,7 +134,9 @@ exports.finalizingReset = async (req, res) => {
         passwordReq.isActive = false;
         await passwordReq.save();
 
-        return res.status(200).json({ message: 'Password reset successful' });
+        // return res.status(200).json({ message: 'Password reset successful' });
+        const externalURL = 'http://127.0.0.1:5500/views/login.html';
+        return res.redirect(302, externalURL);
     } catch (err) {
         return res.status(400).json({ message: err.message });
     }
