@@ -6,6 +6,7 @@ const sequelize = require('./utils/database');
 const User = require('./models/user');
 const Expense = require('./models/add-expense');
 const Order = require('./models/order');
+const ForgotPasswordReset = require("./models/ForgotPasswordRequests");
 
 const userRoutes = require('./routes/user');
 const expenseRoutes = require('./routes/add-expense');
@@ -18,6 +19,7 @@ const app = express();
 
 app.use(cors());
 
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 app.use('/user', userRoutes);
@@ -34,7 +36,10 @@ Expense.belongsTo(User);
 User.hasMany(Order);
 Order.belongsTo(User);
 
-sequelize.sync({})
+User.hasMany(ForgotPasswordReset);
+ForgotPasswordReset.belongsTo(User);
+
+sequelize.sync()
   .then(() => {
     console.log("Database sync successful");
     app.listen(3000, () => {
